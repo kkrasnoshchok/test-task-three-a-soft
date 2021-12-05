@@ -1,35 +1,27 @@
-import React, { useRef, useEffect } from "react";
+import React, {useRef, useState} from "react";
 import "./App.css";
 
 const App = () => {
+   const [state, setState] = useState([]);
+
   // создаём ref, чтобы заменить инпут красивой кнопкой
   const inputFileRef = useRef(null);
-
-  useEffect(() => {
-    console.log(localStorage.getItem("state"));
-  });
 
   let handleInputFileChange = (e) => {
     const file = e.target.files[0];
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = () => {
-      // setState([...JSON.parse(localStorage.getItem("state")), { fileName: file.name, fileImage: reader.result }]);
-      localStorage.setItem(
-        "state",
-        JSON.stringify([
-          ...JSON.parse(localStorage.getItem("state")),
-          { fileName: file.name, fileImage: reader.result },
-        ])
-      );
+      setState([...state, { fileName: file.name, fileImage: reader.result }]);
     };
   };
 
   // метод map для отображения картинок с именами
 
-  console.log(JSON.parse(localStorage.getItem("state")));
+  console.log(state);
 
-  let imagesGallery = JSON.parse(localStorage.getItem("state")).map((e) => {
+
+  let imagesGallery = state.map((e) => {
     return (
       <div className="galleryItem">
         <img key="lol" src={e.fileImage} alt="" className="img" />
@@ -38,11 +30,9 @@ const App = () => {
     );
   });
 
-  console.log(JSON.parse(localStorage.getItem("state")));
-
   return (
     <div className="app">
-      <form>
+      <form className="app__form">
         <button
           className="addImageButton"
           onClick={(event) => {
@@ -50,7 +40,7 @@ const App = () => {
             inputFileRef.current.click();
           }}
         >
-          add images
+          add image
         </button>
         <input
           type="file"
@@ -60,7 +50,6 @@ const App = () => {
           style={{ display: "none" }}
         />
       </form>
-      <br />
       <div className="gallery">{imagesGallery}</div>
     </div>
   );
